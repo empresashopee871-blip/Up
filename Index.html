@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Números Globais SMS</title>
+<script src="update.js"></script>
+<style>
+body { background:#111; color:white; font-family:Arial; padding:20px; }
+button { background:#0f0; border:none; padding:15px; font-size:20px; font-weight:bold; width:100%; border-radius:10px; }
+#numero { font-size:22px; margin:20px 0; background:#222; padding:15px; border-radius:8px; }
+</style>
+</head>
+
+<body>
+
+<h2>Número Global Atual</h2>
+<div id="numero">Carregando...</div>
+
+<button onclick="usar()">Usar Número</button>
+
+<script>
+let numeros = [];
+let atual = null;
+
+async function carregar() {
+    const r = await fetch("numeros.json");
+    const data = await r.json();
+
+    numeros = data.numeros;
+
+    if(numeros.length === 0) {
+        document.getElementById("numero").innerText = "SEM NÚMEROS DISPONÍVEIS";
+        return;
+    }
+
+    atual = numeros[0];
+    document.getElementById("numero").innerText = atual;
+}
+
+async function usar() {
+    if(!atual) return;
+
+    // abre sms:
+    window.location.href = "sms:" + atual;
+
+    // remove número global (para todos)
+    await removerNumero(atual);
+
+    alert("Número removido globalmente!");
+
+    location.reload();
+}
+
+carregar();
+</script>
+
+</body>
+</html>
